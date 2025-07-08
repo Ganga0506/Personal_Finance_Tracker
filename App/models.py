@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float, Date, Enum
-from database import Base
+from app.database import Base
 import enum
 
 class CategoryEnum(enum.Enum):
