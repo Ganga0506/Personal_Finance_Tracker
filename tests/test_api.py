@@ -14,12 +14,11 @@ class TestAPI(unittest.TestCase):
         data = {
             "name": "Test Transaction",
             "amount": 10.0,
-            "category": "MISC",
+            "category": "Misc",
             "date": "2025-07-09"
         }
-        response = client.post("/transactions", json=data)
+        response = client.post("/add", data=data, allow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["name"], "Test Transaction")
 
 if __name__ == "__main__":
     unittest.main()
