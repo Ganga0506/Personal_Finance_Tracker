@@ -8,7 +8,8 @@ class CategoryEnum(enum.Enum):
     FUN = "Fun"
     UTILITIES = "Utilities"
     HEALTH = "Health"
-    MISC = "MISC"
+    MISC = "Misc"
+    INCOME = "Income"
 
 class Transaction(Base): 
     __tablename__ = 'transactions'
