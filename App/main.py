@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request, Depends, HTTPException, Form
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from typing import List
@@ -103,12 +103,18 @@ def create_transaction(transaction: TransactionCreate, db: Session = Depends(get
     return txn
 
 # 5. Get summary 
-@app.get("/summary")
+@app.get("/summary", response_class=HTMLResponse)
 def get_summary(request: Request, db: Session = Depends(get_db)):
     data = transactions.get_summary(db)
+    summary_data = transactions.get_summary(db)
+    pie_img = transactions.get_spending_pie_chart(db)
+    line_img = transactions.get_daily_spending_chart(db)
+
     return templates.TemplateResponse("summary.html", {
         "request": request,
-        "summary": data
+        "summary": data,
+        "pie_chart": pie_img,
+        "line_chart": line_img,
     })
 
 # 6. Get categories (JSON)

@@ -7,7 +7,6 @@ class CategoryEnum(enum.Enum):
     TRANSPORT = "Transport"
     FUN = "Fun"
     UTILITIES = "Utilities"
-    HEALTH = "Health"
     MISC = "Misc"
 
 class Transaction(Base): 

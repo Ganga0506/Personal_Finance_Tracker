@@ -9,4 +9,14 @@
     <li>Total Expenses: ${{ summary.total_expenses }}</li>
     <li>Net Balance: ${{ summary.net_balance }}</li>
   </ul>
+
+  <h3>Spending by Category</h3>
+  {% if pie_chart %}
+  <img src="data:image/png;base64,{{ pie_chart }}" alt="Pie Chart">
+{% endif %}
+
+{% if line_chart %}
+  <img src="data:image/png;base64,{{ line_chart }}" alt="Spending Over Time Chart">
+{% endif %}
+  
 {% endblock %}

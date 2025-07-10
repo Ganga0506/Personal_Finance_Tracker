@@ -1,6 +1,11 @@
 from sqlalchemy.orm import Session
 from app.models import Transaction, CategoryEnum, Income
 from datetime import date
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+from io import BytesIO
+import base64
 
 def get_categories():
     """
@@ -140,3 +145,51 @@ def add_income(db: Session, name: str, amount: float, date_: date):
     """
 
     return add_transaction(db, name, amount, CategoryEnum.INCOME, date_)
+
+def get_spending_pie_chart(db):
+    transactions = db.query(Transaction).all()
+
+    category_totals = {}
+    for txn in transactions:
+        cat = txn.category.value
+        category_totals[cat] = category_totals.get(cat, 0) + txn.amount
+    
+    if not category_totals:
+        return None 
+    
+    fig, ax = plt.subplots()
+    ax.pie(category_totals.values(), labels=category_totals.keys(), autopct="%1.1f%%")
+    ax.set_title("Spending by Category")
+
+    buf = BytesIO()
+    plt.savefig(buf, format="png")
+    buf.seek(0)
+    img_base64 = base64.b64encode(buf.read()).decode("utf-8")
+    plt.close()
+    return img_base64
+
+def get_daily_spending_chart(db):
+    txns = db.query(Transaction).order_by(Transaction.date).all()
+    if not txns:
+        return None
+
+    date_totals = {}
+    for txn in txns:
+        d = txn.date
+        date_totals[d] = date_totals.get(d, 0) + txn.amount
+
+    dates = sorted(date_totals.keys())
+    values = [date_totals[d] for d in dates]
+
+    fig, ax = plt.subplots()
+    ax.plot(dates, values, marker='o')
+    ax.set_title("Daily Spending")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Amount Spent")
+
+    buf = BytesIO()
+    plt.savefig(buf, format="png")
+    buf.seek(0)
+    img_base64 = base64.b64encode(buf.read()).decode("utf-8")
+    plt.close()
+    return img_base64
