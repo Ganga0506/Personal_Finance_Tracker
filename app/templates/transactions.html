@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Delete Transaction{% endblock %}
+{% block title %}All Transactions{% endblock %}
 
 {% block content %}
-<h2>Delete a Transaction</h2>
+<h2>All Transactions</h2>
 
+{% if transactions %}
 <table border="1">
     <tr>
-        <th>ID</th>
         <th>Name</th>
         <th>Amount</th>
         <th>Category</th>
@@ -15,20 +15,14 @@
     </tr>
     {% for txn in transactions %}
     <tr>
-        <td>{{ txn.id }}</td>
         <td>{{ txn.name }}</td>
-        <td>${{ txn.amount }}</td>
+        <td>{{ txn.amount }}</td>
         <td>{{ txn.category.value }}</td>
         <td>{{ txn.date }}</td>
     </tr>
     {% endfor %}
 </table>
-
-<br>
-
-<form method="post" action="/delete">
-    <label for="id">Enter ID to Delete:</label>
-    <input type="number" name="id" required>
-    <button type="submit">Delete</button>
-</form>
+{% else %}
+<p>No transactions yet.</p>
+{% endif %}
 {% endblock %}

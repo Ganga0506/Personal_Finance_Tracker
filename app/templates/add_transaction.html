@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Add Transaction{% endblock %}
+
+{% block content %}
+<h2>Add a New Transaction</h2>
+<form method="post" action="/add">
+    <label>Name:</label>
+    <input type="text" name="name" required><br><br>
+
+    <label>Amount:</label>
+    <input type="number" name="amount" min="0" step="0.01" required><br><br>
+
+    <label>Category:</label>
+    <select name="category">
+        <option value="Food">Food</option>
+        <option value="Fun">Fun</option>
+        <option value="Transport">Transport</option>
+        <option value="Utilities">Utilities</option>
+        <option value="Health">Health</option>
+        <option value="Misc">Misc</option>
+        <option value="Income">Income</option>
+      </select>      
+
+    <label>Date:</label>
+    <input type="date" name="date" required><br><br>
+
+    <button type="submit">Add Transaction</button>
+</form>
+{% endblock %}

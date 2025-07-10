@@ -77,10 +77,13 @@ def add_transaction(
             category=CategoryEnum(category),
             date=date
         )
-        transactions.add_transaction(db, **transaction_data.dict())
-        return RedirectResponse(url="/transactions", status_code=303)
+        data = transaction_data.dict()
+        data["date_"] = data.pop("date") 
+        transactions.add_transaction(db, **data)
+        return RedirectResponse(url="/", status_code=303)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
 
 # 3. Show all transactions
 @app.get("/transactions")
@@ -106,3 +109,27 @@ def get_summary(budget: float, db: Session = Depends(get_db)):
 @app.get("/categories")
 def get_categories():
     return transactions.get_categories()
+
+# 7. Delete transaction
+@app.api_route("/delete", methods=["GET", "POST"])
+def delete_transaction(
+    request: Request,
+    db: Session = Depends(get_db),
+    id: int = Form(None)
+):
+    if request.method == "GET":
+        all_txns = transactions.get_all_transactions(db)
+        return templates.TemplateResponse("delete.html", {
+            "request": request,
+            "transactions": all_txns
+        })
+
+    # Handle POST request (form submission to delete)
+    if id is None:
+        raise HTTPException(status_code=400, detail="ID is required")
+
+    success = transactions.delete_transaction(db, id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+
+    return RedirectResponse(url="/transactions", status_code=303)

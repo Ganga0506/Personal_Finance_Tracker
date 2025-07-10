@@ -3,3 +3,6 @@ test:
 
 run-transactions:
 	PYTHONPATH=. python3 app/transactions.py
+
+run:
+	PYTHONPATH=. uvicorn app.main:app --reload
