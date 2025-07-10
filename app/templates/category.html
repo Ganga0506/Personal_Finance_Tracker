@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Filter by Category{% endblock %}
+
+{% block content %}
+<h2>Filter Transactions by Category</h2>
+<form method="post" action="/category">
+    <label for="category">Select Category:</label>
+    <select id="category" name="category" required>
+        {% for cat in categories %}
+        <option value="{{ cat }}">{{ cat }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">View</button>
+</form>
+{% endblock %}

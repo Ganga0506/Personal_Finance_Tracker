@@ -46,31 +46,31 @@ templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
 # 1. Home Page
 @app.get("/")
-def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request,})
+def home(request: Request, db: Session = Depends(get_db)):
+    all_txns = transactions.get_all_transactions(db)
+    return templates.TemplateResponse("index.html", {"request": request, "transactions": all_txns})
 
-# 2. Show form to add transaction
-@app.post("/add")
-def add_form(request: Request):
-    categories = transactions.get_categories()
-    return templates.TemplateResponse("add_transaction.html", {
-        "request": request,
-        "categories": categories
-    })
-
-# 3. Handle form submission from /add
-def submit_form(
+# 2. Show form on GET to add transaction and also handle POST submission
+@app.api_route("/add", methods=["GET", "POST"])
+def add_transaction(
     request: Request,
-    name: str = Form(...),
-    amount: float = Form(...),
-    category: str = Form(...),
-    date: date = Form(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    name: str = Form(None),
+    amount: float = Form(None),
+    category: str = Form(None),
+    date: date = Form(None)
 ):
-    if amount < 0:
+    if request.method == "GET":
+        categories = transactions.get_categories()
+        return templates.TemplateResponse("add_transaction.html", {
+            "request": request,
+            "categories": categories
+        })
+    
+    if amount is not None and amount<0: 
         raise HTTPException(status_code=400, detail="Amount cannot be negative")
     
-    try:
+    try: 
         transaction_data = TransactionCreate(
             name=name,
             amount=amount,
@@ -81,8 +81,8 @@ def submit_form(
         return RedirectResponse(url="/transactions", status_code=303)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-    
-# 4. Show all transactions
+
+# 3. Show all transactions
 @app.get("/transactions")
 def view_transactions(request: Request, db: Session = Depends(get_db)):
     all_txns = transactions.get_all_transactions(db)
@@ -91,18 +91,18 @@ def view_transactions(request: Request, db: Session = Depends(get_db)):
         "transactions": all_txns
     })
 
-# 5. POST transaction (API, not form)
+# 4. POST transaction (API, not form)
 @app.post("/transactions", response_model=TransactionResponse)
 def create_transaction(transaction: TransactionCreate, db: Session = Depends(get_db)):
     txn = transactions.add_transaction(db, **transaction.dict())
     return txn
 
-# 6. Get summary (JSON for now)
+# 5. Get summary (JSON for now)
 @app.get("/summary")
 def get_summary(budget: float, db: Session = Depends(get_db)):
     return transactions.get_summary(db, budget)
 
-# 7. Get categories (JSON)
+# 6. Get categories (JSON)
 @app.get("/categories")
 def get_categories():
     return transactions.get_categories()
