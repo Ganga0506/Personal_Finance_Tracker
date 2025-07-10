@@ -8,9 +8,31 @@
     <label for="category">Select Category:</label>
     <select id="category" name="category" required>
         {% for cat in categories %}
-        <option value="{{ cat }}">{{ cat }}</option>
+        <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>
+        {{ cat|lower|capitalize }}
+        </option>
         {% endfor %}
     </select>
     <button type="submit">View</button>
 </form>
+
+{% if transactions %}
+<h3>Transactions in category: {{ selected_category.capitalize() }}</h3>
+<table>
+    <thead>
+        <tr><th>ID</th><th>Name</th><th>Amount</th><th>Category</th><th>Date</th></tr>
+    </thead>
+    <tbody>
+        {% for txn in transactions %}
+        <tr>
+            <td>{{ txn.id }}</td>
+            <td>{{ txn.name }}</td>
+            <td>{{ txn.amount }}</td>
+            <td>{{ txn.category.value }}</td>
+            <td>{{ txn.date }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
 {% endblock %}

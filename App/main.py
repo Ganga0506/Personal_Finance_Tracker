@@ -133,3 +133,25 @@ def delete_transaction(
         raise HTTPException(status_code=404, detail="Transaction not found")
 
     return RedirectResponse(url="/transactions", status_code=303)
+
+# 8. Filter transactions by category
+@app.api_route("/category", methods=["GET", "POST"])
+def filter_by_category(
+    request: Request,
+    db: Session = Depends(get_db),
+    category: str = Form(None)
+):
+    if request.method == "GET":
+        categories = transactions.get_categories()
+        return templates.TemplateResponse("category.html", {
+            "request": request,
+            "categories": categories
+        })
+    
+    txns = transactions.get_by_category(db, category)
+    return templates.TemplateResponse("category.html", {
+        "request": request,
+        "categories": transactions.get_categories(),
+        "transactions": txns,
+        "selected_category": category
+    })
