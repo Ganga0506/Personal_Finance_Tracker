@@ -102,10 +102,14 @@ def create_transaction(transaction: TransactionCreate, db: Session = Depends(get
     txn = transactions.add_transaction(db, **transaction.dict())
     return txn
 
-# 5. Get summary (JSON for now)
+# 5. Get summary 
 @app.get("/summary")
-def get_summary(budget: float, db: Session = Depends(get_db)):
-    return transactions.get_summary(db, budget)
+def get_summary(request: Request, db: Session = Depends(get_db)):
+    data = transactions.get_summary(db)
+    return templates.TemplateResponse("summary.html", {
+        "request": request,
+        "summary": data
+    })
 
 # 6. Get categories (JSON)
 @app.get("/categories")

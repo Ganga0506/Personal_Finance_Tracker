@@ -43,22 +43,27 @@ def get_all_transactions(db):
     """
     return db.query(Transaction).all()
 
-def get_summary(db: Session, budget: float):
+def get_summary(db: Session):
     """
-    Calculate total spent and remaining budget.
+    Calculate total income, total expenses, net balance, and remaining budget.
     Args:
         db: SQLAlchemy Session object
         budget: Total budget amount (float)
     Returns:
-        dict with keys "total_spent" and "remaining", rounded to 2 decimals
+        dict with keys "total_income", "total_expenses", "net_balance", "remaining"
     """
-
     transactions = db.query(Transaction).all()
-    total_spent = sum(txn.amount for txn in transactions)
-    remaining = budget - total_spent
+    incomes = db.query(Income).all()
+
+    total_income = sum(inc.amount for inc in incomes)
+    total_expenses = sum(txn.amount for txn in transactions)
+
+    net_balance = total_income - total_expenses
+
     return {
-        "total_spent": round(total_spent, 2),
-        "remaining": round(remaining, 2)
+        "total_income": round(total_income, 2),
+        "total_expenses": round(total_expenses, 2),
+        "net_balance": round(net_balance, 2),
     }
 
 def get_by_category(db: Session, category: CategoryEnum):

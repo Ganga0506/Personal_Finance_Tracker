@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Summary{% endblock %}
+
+{% block content %}
+  <h2>📊 Summary</h2>
+  <ul>
+    <li>Total Income: ${{ summary.total_income }}</li>
+    <li>Total Expenses: ${{ summary.total_expenses }}</li>
+    <li>Net Balance: ${{ summary.net_balance }}</li>
+  </ul>
+{% endblock %}
