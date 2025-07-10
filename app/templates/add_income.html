@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Add Income - Personal Finance Tracker{% endblock %}
+
+{% block content %}
+  <h2>Add Income</h2>
+  <form method="post" action="/add_income">
+
+    <label for="amount">Amount:</label><br>
+    <input type="number" id="amount" name="amount" step="1" min="0" required><br><br>
+
+    <label for="date">Date:</label><br>
+    <input type="date" id="date" name="date_" required><br><br>
+
+    <button type="submit">Add Income</button>
+  </form>
+{% endblock %}

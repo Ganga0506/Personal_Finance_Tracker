@@ -87,9 +87,15 @@ def get_daily_budget(db: Session, budget: float, today: date, end_date: date):
 
     days_left = (end_date - today).days + 1  # include today
     transactions = db.query(Transaction).all()
+    incomes = db.query(Income).all()
+    
     total_spent = sum(txn.amount for txn in transactions)
-    remaining = budget - total_spent
+    total_income = sum(inc.amount for inc in incomes)
+
+    remaining = total_income - total_spent
     if days_left <= 0:
+        return 0.0
+    if remaining <= 0:
         return 0.0
     return round(remaining / days_left, 2)
 
@@ -104,7 +110,8 @@ def get_remaining_budget(db: Session, budget: float):
     """
 
     total_spent = sum(txn.amount for txn in db.query(Transaction).all())
-    remaining = budget - total_spent
+    total_income = sum(inc.amount for inc in db.query(Income).all())
+    remaining = total_income - total_spent
     return round(remaining, 2)
 
 def delete_transaction(db: Session, transaction_id: int):

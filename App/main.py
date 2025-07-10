@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from typing import List
 from app import transactions 
 from app.database import SessionLocal
-from app.models import CategoryEnum, Transaction
+from app.models import CategoryEnum, Income
 from pydantic import BaseModel
 from datetime import date
 import os
@@ -155,3 +155,53 @@ def filter_by_category(
         "transactions": txns,
         "selected_category": category
     })
+
+# 9. Budget Summary 
+@app.api_route("/budget_summary", methods=["GET", "POST"])
+def budget_summary(
+    request: Request,
+    db: Session = Depends(get_db),
+    total_budget: float = Form(None),
+    end_date: date = Form(None)
+):
+    daily = None
+    remaining = None
+    if total_budget is not None and total_budget < 0:
+        raise HTTPException(status_code=400, detail="Total budget cannot be negative")
+    
+    if request.method == "POST" and total_budget and end_date:
+        daily = transactions.get_daily_budget(db, total_budget, date.today(), end_date)
+        remaining = transactions.get_remaining_budget(db, total_budget)
+
+    return templates.TemplateResponse("budget_summary.html", {
+        "request": request,
+        "daily_budget": daily,
+        "remaining_budget": remaining,
+        "total_budget": total_budget,
+        "end_date": end_date
+    })
+
+#10. Add Income
+@app.api_route("/add_income", methods=["GET", "POST"])
+def add_income(
+    request: Request,
+    db: Session = Depends(get_db),
+    amount: float = Form(None),
+    date_: date = Form(None)
+):
+    if request.method == "GET":
+        return templates.TemplateResponse("add_income.html", {"request": request})
+
+    if amount is not None and amount < 0:
+        return templates.TemplateResponse("add_income.html", {
+            "request": request,
+            "error": "Please enter a valid positive amount."
+        })
+    
+    income_record = Income(amount=amount, date=date_)
+    db.add(income_record)
+    db.commit()
+    db.refresh(income_record)
+
+    return RedirectResponse(url="/", status_code=303)
+    

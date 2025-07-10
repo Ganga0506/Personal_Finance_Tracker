@@ -9,7 +9,6 @@ class CategoryEnum(enum.Enum):
     UTILITIES = "Utilities"
     HEALTH = "Health"
     MISC = "Misc"
-    INCOME = "Income"
 
 class Transaction(Base): 
     __tablename__ = 'transactions'
@@ -22,3 +21,13 @@ class Transaction(Base):
 
     def __repr__(self):
         return f"<Transaction(id={self.id}, name='{self.name}', amount={self.amount}, category='{self.category}', date={self.date})>"
+    
+class Income(Base):
+    __tablename__ = "income"
+
+    id =  Column(Integer, primary_key=True, index=True)
+    amount = Column(Float, nullable=False)
+    date = Column(Date, nullable=False)
+
+    def __repr__(self):
+        return f"<Income(id={self.id}, amount={self.amount}, date={self.date})>"

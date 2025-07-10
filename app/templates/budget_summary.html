@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Budget Summary{% endblock %}
+
+{% block content %}
+<h2>📋 Budget Summary</h2>
+
+<form method="post">
+    <label>Total Budget: <input type="number" name="total_budget" step="1" min="0" required></label><br><br>
+    <label>End Date: <input type="date" name="end_date" required></label><br><br>
+    <button type="submit">Calculate</button>
+</form>
+
+{% if daily_budget is not none and remaining_budget is not none %}
+    <hr>
+    <p>🧮 <strong>Daily Budget:</strong> ${{ daily_budget }}</p>
+    <p>💸 <strong>Remaining Budget:</strong> ${{ remaining_budget }}</p>
+{% endif %}
+{% endblock %}
