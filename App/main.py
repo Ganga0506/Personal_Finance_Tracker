@@ -89,9 +89,11 @@ def add_transaction(
 @app.get("/transactions")
 def view_transactions(request: Request, db: Session = Depends(get_db)):
     all_txns = transactions.get_all_transactions(db)
+    all_income = db.query(Income).order_by(Income.date.desc()).all()
     return templates.TemplateResponse("transactions.html", {
         "request": request,
-        "transactions": all_txns
+        "transactions": all_txns,
+        "incomes": all_income
     })
 
 # 4. POST transaction (API, not form)

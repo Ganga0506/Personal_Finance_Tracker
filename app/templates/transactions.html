@@ -25,4 +25,24 @@
 {% else %}
 <p>No transactions yet.</p>
 {% endif %}
+
+<hr>
+<h2>All Income</h2>
+
+{% if incomes %}
+<table border="1">
+    <tr>
+        <th>Amount</th>
+        <th>Date</th>
+    </tr>
+    {% for income in incomes %}
+    <tr>
+        <td>{{ income.amount }}</td>
+        <td>{{ income.date }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No income records yet.</p>
+{% endif %}
 {% endblock %}
