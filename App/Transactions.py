@@ -4,6 +4,7 @@ from datetime import date
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 from io import BytesIO
 import base64
 
@@ -113,6 +114,8 @@ def get_remaining_budget(db: Session, budget: float):
 
     total_spent = sum(txn.amount for txn in db.query(Transaction).all())
     remaining = budget - total_spent
+    if remaining < 0:
+        remaining = 0
     return round(remaining, 2)
 
 def delete_transaction(db: Session, transaction_id: int):
@@ -183,9 +186,13 @@ def get_daily_spending_chart(db):
 
     fig, ax = plt.subplots()
     ax.plot(dates, values, marker='o')
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
     ax.set_title("Daily Spending")
     ax.set_xlabel("Date")
     ax.set_ylabel("Amount Spent")
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+
 
     buf = BytesIO()
     plt.savefig(buf, format="png")

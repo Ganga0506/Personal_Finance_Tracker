@@ -9,12 +9,20 @@ from app.models import CategoryEnum, Income
 from pydantic import BaseModel
 from datetime import date
 import os
+from fastapi.staticfiles import StaticFiles
+
 
 
 app = FastAPI()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
+
+app.mount(
+    "/static",
+    StaticFiles(directory=os.path.join("app", "static")),
+    name="static"
+)
 
 def get_db():
     db = SessionLocal()
