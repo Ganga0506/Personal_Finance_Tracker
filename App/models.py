@@ -3,6 +3,9 @@ from app.database import Base
 import enum
 
 class CategoryEnum(enum.Enum):
+    """
+    Enum representing available transaction categories.
+    """
     FOOD = "Food"
     TRANSPORT = "Transport"
     FUN = "Fun"
@@ -10,6 +13,16 @@ class CategoryEnum(enum.Enum):
     MISC = "Misc"
 
 class Transaction(Base): 
+    """
+    SQLAlchemy model for a financial transaction.
+
+    Attributes:
+        id (int): Primary key.
+        name (str): Name or description of the transaction.
+        amount (float): Amount of the transaction.
+        category (CategoryEnum): Category of the transaction.
+        date (date): Date of the transaction.
+    """
     __tablename__ = 'transactions'
 
     id = Column(Integer, primary_key=True, index=True)
@@ -17,16 +30,18 @@ class Transaction(Base):
     amount = Column(Float, nullable=False)
     category = Column(Enum(CategoryEnum), nullable=False)
     date = Column(Date, nullable=False)
-
-    def __repr__(self):
-        return f"<Transaction(id={self.id}, name='{self.name}', amount={self.amount}, category='{self.category}', date={self.date})>"
     
 class Income(Base):
+    """
+    SQLAlchemy model for recording income.
+
+    Attributes:
+        id (int): Primary key.
+        amount (float): Income amount.
+        date (date): Date of income.
+    """
     __tablename__ = "income"
 
     id =  Column(Integer, primary_key=True, index=True)
     amount = Column(Float, nullable=False)
     date = Column(Date, nullable=False)
-
-    def __repr__(self):
-        return f"<Income(id={self.id}, amount={self.amount}, date={self.date})>"
